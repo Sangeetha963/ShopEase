@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
 class FooterWidget extends StatelessWidget {
   const FooterWidget({super.key});
@@ -6,26 +7,27 @@ class FooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
-      padding: const EdgeInsets.all(24),
+      width: double.infinity, // Ensures full width
+      color: AppColors.primaryBlue, // Matches AppBar color
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
         children: [
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 16,
-            runSpacing: 8,
+            spacing: 24,
+            runSpacing: 12,
             children: const [
-              Text("About Us"),
-              Text("Contact"),
-              Text("Careers"),
-              Text("Privacy Policy"),
-              Text("Terms of Service"),
+              Text("About Us", style: TextStyle(color: Colors.white)),
+              Text("Contact", style: TextStyle(color: Colors.white)),
+              Text("Careers", style: TextStyle(color: Colors.white)),
+              Text("Privacy Policy", style: TextStyle(color: Colors.white)),
+              Text("Terms of Service", style: TextStyle(color: Colors.white)),
             ],
           ),
           const SizedBox(height: 16),
           const Text(
             "© 2025 ShopEase. All rights reserved.",
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.white70, fontSize: 12),
           ),
         ],
       ),
