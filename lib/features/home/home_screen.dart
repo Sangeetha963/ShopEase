@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/widgets/footer_widget.dart';
-import 'category_slider.dart';
 import 'deals_banner.dart';
 import 'home_provider.dart';
+import 'category_products_page.dart'; // ✅ Import here
+import '../../data/recommended_products.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,17 +13,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoryProvider);
-
-    final recommendedProducts = [
-      {"name": "Smartphone", "image": "assets/images/products/smartphone.png", "price": "₹25,999"},
-      {"name": "Headphones", "image": "assets/images/products/headphones.png", "price": "₹3,499"},
-      {"name": "Shoes", "image": "assets/images/products/shoes.png", "price": "₹2,199"},
-      {"name": "Backpack", "image": "assets/images/products/backpack.png", "price": "₹1,299"},
-      {"name": "Watch", "image": "assets/images/products/watch.png", "price": "₹4,999"},
-      {"name": "Laptop", "image": "assets/images/products/laptop.png", "price": "₹45,999"},
-      {"name": "Camera", "image": "assets/images/products/camera.png", "price": "₹15,499"},
-      {"name": "Sunglasses", "image": "assets/images/products/sunglasses.png", "price": "₹799"},
-    ];
+    final products = recommendedProducts;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -42,9 +33,10 @@ class HomeScreen extends ConsumerWidget {
                 const Text(
                   'ShopEase',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -54,12 +46,12 @@ class HomeScreen extends ConsumerWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: TextField(
+                    child: const TextField(
                       decoration: InputDecoration(
                         hintText: 'Search for products',
-                        prefixIcon: const Icon(Icons.search),
+                        prefixIcon: Icon(Icons.search),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        contentPadding: EdgeInsets.symmetric(vertical: 8),
                       ),
                     ),
                   ),
@@ -87,7 +79,8 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            // Amazon-style horizontal category slider
+
+            // ✅ Clickable Category Slider
             SizedBox(
               height: 90,
               child: ListView.builder(
@@ -96,24 +89,31 @@ class HomeScreen extends ConsumerWidget {
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final category = categories[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: AppColors.primaryBlue,
-                          child: Icon(
-                            category['icon'],
-                            color: Colors.white,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CategoryProductsPage(categoryName: category['name']),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundColor: AppColors.primaryBlue,
+                            child: Icon(category['icon'], color: Colors.white),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          category['name'],
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            category['name'],
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -122,10 +122,11 @@ class HomeScreen extends ConsumerWidget {
 
             const SizedBox(height: 20),
             const DealsBanner(),
-
             const SizedBox(height: 40),
-            Container(
-              padding: const EdgeInsets.all(16),
+
+            // Recommended Products Carousel (unchanged)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,64 +137,88 @@ class HomeScreen extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: recommendedProducts.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 0.65,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
+                  const SizedBox(height: 16),
+                 SizedBox(
+                    height: 250,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: products.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to CategoryProductsPage using the product's category
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CategoryProductsPage(categoryName: product['category']!),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 160,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 6,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                  child: Image.asset(
+                                    product['image']!,
+                                    height: 140,
+                                    width: double.infinity,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    product['name']!,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    product['price']!,
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      final product = recommendedProducts[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: Image.asset(
-                                  product['image']!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                product['name']!,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                product['price']!,
-                                style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                  )
+
                 ],
               ),
             ),
 
+            const SizedBox(height: 40),
             const FooterWidget(),
           ],
         ),

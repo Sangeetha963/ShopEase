@@ -18,7 +18,7 @@ dependencies:
   shimmer: ^3.0.0
 
   # --- State Management ---
-  flutter_riverpod: ^3.0.0-dev.3
+  flutter_riverpod: ^2.0.0
 
   # --- Local Storage & Preferences ---
   hive: ^2.2.3
@@ -47,3 +47,10 @@ flutter:
     - assets/icons/
     - assets/animations/
     - assets/fonts/
+  
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700

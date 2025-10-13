@@ -18,16 +18,13 @@
   <!-- Manifest -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Base href for routing -->
-  <base href="$FLUTTER_BASE_HREF">
-
   <title>ShopEase 🛍️</title>
 
-  <!-- Optional: Preload fonts for faster rendering -->
+  <!-- Preload fonts -->
   <link rel="preload" href="assets/fonts/Poppins-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/Poppins-Bold.ttf" as="font" type="font/ttf" crossorigin>
 
-  <!-- Optional: Preload key images for above-the-fold content -->
+  <!-- Preload logo -->
   <link rel="preload" href="assets/images/logo.png" as="image">
 </head>
 <body>
@@ -35,25 +32,14 @@
   <div id="loading" style="display:flex;justify-content:center;align-items:center;height:100vh;">
     <div>
       <img src="assets/images/logo.png" alt="ShopEase Logo" width="120">
-      <p style="font-family:Poppins,sans-serif;font-size:1.2rem;color:#555;text-align:center;margin-top:1rem;">
+      <p style="font-family:'Poppins',sans-serif;font-size:1.2rem;color:#555;text-align:center;margin-top:1rem;">
         Loading ShopEase...
       </p>
     </div>
   </div>
 
   <!-- Flutter bootstrap script -->
-  <script src="flutter_bootstrap.js" async defer></script>
-
-  <!-- Optional: Lazy-load third-party JS (analytics, chat) after Flutter is ready -->
-  <script>
-    window.addEventListener('load', () => {
-      // Example: lazy-load Google Analytics after Flutter app loads
-      // const gaScript = document.createElement('script');
-      // gaScript.src = "https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID";
-      // gaScript.async = true;
-      // document.body.appendChild(gaScript);
-    });
-  </script>
+  <script src="main.dart.js" type="application/javascript"></script>
 
   <noscript>
     <p style="text-align:center;color:red;">
