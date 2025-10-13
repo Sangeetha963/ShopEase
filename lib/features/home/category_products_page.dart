@@ -16,6 +16,30 @@ class CategoryProductsPage extends ConsumerWidget {
         .toList();
     final cartCount = ref.watch(cartProvider).length;
 
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive crossAxisCount
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (screenWidth >= 1200) {
+      // Large screens / desktop
+      crossAxisCount = 5;
+      childAspectRatio = 0.65;
+    } else if (screenWidth >= 800) {
+      // Tablet
+      crossAxisCount = 4;
+      childAspectRatio = 0.7;
+    } else if (screenWidth >= 600) {
+      // Large phone / small tablet
+      crossAxisCount = 3;
+      childAspectRatio = 0.7;
+    } else {
+      // Mobile phones
+      crossAxisCount = 2;
+      childAspectRatio = 0.75;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryName),
@@ -40,9 +64,9 @@ class CategoryProductsPage extends ConsumerWidget {
           ? const Center(child: Text("No products found for this category."))
           : GridView.builder(
               padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 0.65,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: childAspectRatio,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
@@ -50,7 +74,8 @@ class CategoryProductsPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
                 return Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +100,8 @@ class CategoryProductsPage extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           product['price']!,
-                          style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -95,7 +121,8 @@ class CategoryProductsPage extends ConsumerWidget {
                                   backgroundColor: Colors.orange,
                                   minimumSize: const Size.fromHeight(30),
                                 ),
-                                child: const Text('Add to Cart', style: TextStyle(fontSize: 12)),
+                                child: const Text('Add to Cart',
+                                    style: TextStyle(fontSize: 12)),
                               ),
                             ),
                             const SizedBox(width: 4),
@@ -105,14 +132,16 @@ class CategoryProductsPage extends ConsumerWidget {
                                   ref.read(cartProvider.notifier).addToCart(product);
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => const CartPage()),
+                                    MaterialPageRoute(
+                                        builder: (_) => const CartPage()),
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
                                   minimumSize: const Size.fromHeight(30),
                                 ),
-                                child: const Text('Buy Now', style: TextStyle(fontSize: 12)),
+                                child: const Text('Buy Now',
+                                    style: TextStyle(fontSize: 12)),
                               ),
                             ),
                           ],
