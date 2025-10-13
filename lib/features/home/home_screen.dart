@@ -4,8 +4,10 @@ import '../../core/constants/app_colors.dart';
 import '../../core/widgets/footer_widget.dart';
 import 'deals_banner.dart';
 import 'home_provider.dart';
-import 'category_products_page.dart'; // ✅ Import here
+import 'category_products_page.dart';
 import '../../data/recommended_products.dart';
+import '../search/search_screen.dart';
+import '../cart/cart_page.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,8 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoryProvider);
     final products = recommendedProducts;
+
+    final TextEditingController searchController = TextEditingController();
 
     return Scaffold(
       appBar: PreferredSize(
@@ -46,8 +50,20 @@ class HomeScreen extends ConsumerWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const TextField(
-                      decoration: InputDecoration(
+                    child: TextField(
+                      controller: searchController,
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (value) {
+                        if (value.trim().isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SearchScreen(initialQuery: value.trim()),
+                            ),
+                          );
+                        }
+                      },
+                      decoration: const InputDecoration(
                         hintText: 'Search for products',
                         prefixIcon: Icon(Icons.search),
                         border: InputBorder.none,
@@ -67,20 +83,24 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CartPage()),
+                    );
+                  },
                 ),
               ],
             ),
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 10),
 
-            // ✅ Clickable Category Slider
+            // Category Slider
             SizedBox(
               height: 90,
               child: ListView.builder(
@@ -108,10 +128,7 @@ class HomeScreen extends ConsumerWidget {
                             child: Icon(category['icon'], color: Colors.white),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            category['name'],
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                          Text(category['name'], style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -124,7 +141,7 @@ class HomeScreen extends ConsumerWidget {
             const DealsBanner(),
             const SizedBox(height: 40),
 
-            // Recommended Products Carousel (unchanged)
+            // Recommended Products Carousel
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -132,13 +149,10 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   const Text(
                     "Recommended for You",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                 SizedBox(
+                  SizedBox(
                     height: 250,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
@@ -146,14 +160,14 @@ class HomeScreen extends ConsumerWidget {
                       separatorBuilder: (_, __) => const SizedBox(width: 12),
                       itemBuilder: (context, index) {
                         final product = products[index];
-
                         return GestureDetector(
                           onTap: () {
-                            // Navigate to CategoryProductsPage using the product's category
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => CategoryProductsPage(categoryName: product['category']!),
+                                builder: (_) => CategoryProductsPage(
+                                  categoryName: product['category']!,
+                                ),
                               ),
                             );
                           },
@@ -189,21 +203,14 @@ class HomeScreen extends ConsumerWidget {
                                     product['name']!,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Text(
                                     product['price']!,
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
+                                    style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13),
                                   ),
                                 ),
                               ],
@@ -213,7 +220,6 @@ class HomeScreen extends ConsumerWidget {
                       },
                     ),
                   )
-
                 ],
               ),
             ),
