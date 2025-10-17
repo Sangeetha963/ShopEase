@@ -18,7 +18,7 @@ class BillingPage extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Billing")),
+      appBar: AppBar(title: const Text("Billing Section")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
