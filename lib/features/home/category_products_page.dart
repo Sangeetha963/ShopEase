@@ -58,7 +58,7 @@ class CategoryProductsPage extends ConsumerWidget {
         ],
       ),
       body: filteredProducts.isEmpty
-          ? const Center(child: Text("No products found for this category."))
+          ? const Center(child: Text("No products found for this category list."))
           : GridView.builder(
               padding: const EdgeInsets.all(12),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
