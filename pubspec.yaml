@@ -20,6 +20,8 @@ dependencies:
   # --- State Management ---
   flutter_riverpod: ^2.0.0
 
+  stream_chat_flutter: ^9.17.0 # ✅ latest compatible version
+
   # --- Local Storage & Preferences ---
   hive: ^2.2.3
   hive_flutter: ^1.1.0

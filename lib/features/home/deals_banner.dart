@@ -14,22 +14,19 @@ class _DealsBannerState extends State<DealsBanner> {
   late Timer _timer;
 
   final List<Map<String, String>> flashDeals = [
-    {
-      "image":
-          "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80",
-      "category": "Electronics"
-    },
-    {
-      "image":
-          "https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=600&q=80",
-      "category": "Home"
-    },
-    {
-      "image":
-          "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
-      "category": "Fashion"
-    },
-  ];
+  {
+    "image": "assets/images/products/electronics.png",
+    "category": "Electronics"
+  },
+  {
+    "image": "assets/images/products/home.png",
+    "category": "Home"
+  },
+  {
+    "image": "assets/images/products/fashion.png",
+    "category": "Fashion"
+  },
+];
 
   double scrollSpeed = 1.0;
   double cardWidth = 250;
@@ -113,26 +110,27 @@ class _DealsBannerState extends State<DealsBanner> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                        deal['image']!,
-                        fit: BoxFit.cover,
-                      ),
-                      Container(
-                        color: Colors.black.withOpacity(0.2),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'Flash Deals 🔥',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                 child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Use Image.asset for local assets
+                        Image.asset(
+                          deal['image']!,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ],
-                  ),
+                        Container(
+                          color: Colors.black.withOpacity(0.2),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Flash Deals 🔥',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                 ),
               ),
             ),

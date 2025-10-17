@@ -10,6 +10,11 @@ import '../search/search_screen.dart';
 import '../cart/cart_page.dart';
 import '../search/voice_search_service.dart';
 import '../profile/profile_screen.dart';
+import '../profile/order_history_screen.dart';
+import '../chat/support_chat_screen.dart';
+import '../product/notifications_page.dart';
+import '../wishlist/wishlist_screen.dart';
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -41,11 +46,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
+  /// 🔹 Helper: Builds dynamic category list from `recommendedProducts`
+  List<Widget> _buildCategoryList(BuildContext context) {
+    final categories = recommendedProducts
+        .map((p) => p['category'])
+        .toSet()
+        .toList(); // unique category names
+
+    return categories
+        .map(
+          (category) => ListTile(
+            leading: const Icon(Icons.category, color: AppColors.primaryBlue),
+            title: Text(category!),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+            onTap: () {
+              Navigator.pop(context); // close the drawer
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CategoryProductsPage(categoryName: category),
+                ),
+              );
+            },
+          ),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(categoryProvider);
 
     return Scaffold(
+      /// 🔹 Drawer Menu for Category Navigation
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlue,
+                ),
+                child: Center(
+                  child: Text(
+                    'Product Categories',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  children: _buildCategoryList(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      /// 🔹 AppBar
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(90),
         child: AppBar(
@@ -55,9 +119,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             padding: const EdgeInsets.only(top: 35, left: 10, right: 10),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white),
-                  onPressed: () {},
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
                 ),
                 const SizedBox(width: 8),
                 const Text(
@@ -88,8 +156,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        SearchScreen(initialQuery: value.trim()),
+                                    builder: (_) => SearchScreen(
+                                      initialQuery: value.trim(),
+                                    ),
                                   ),
                                 );
                               }
@@ -127,18 +196,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-               IconButton(
-                    icon: const Icon(Icons.account_circle, color: Colors.white),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      );
-                    },
-                  ),
                 IconButton(
-                  icon: const Icon(Icons.list_alt, color: Colors.white),
-                  onPressed: () {},
+                  icon: const Icon(Icons.account_circle, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.history, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const OrderHistoryScreen()),
+                    );
+                  },
                 ),
                 IconButton(
                   icon:
@@ -150,27 +225,58 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     );
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationsPage()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.favorite, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WishlistScreen()),
+                    );
+                  },
+                ),
+                IconButton( // ✅ Chat Icon
+                  icon: const Icon(Icons.chat_bubble, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SupportChatScreen()),
+                    );
+                  },
+                ),
               ],
             ),
           ),
         ),
       ),
+
+      /// 🔹 Body
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 10),
 
-            // Display captured keywords
+            // Voice keywords chips
             if (voiceKeywords.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Wrap(
                   spacing: 6,
                   children: voiceKeywords
-                      .map((kw) => Chip(
-                            label: Text(kw),
-                            backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
-                          ))
+                      .map(
+                        (kw) => Chip(
+                          label: Text(kw),
+                          backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -189,8 +295,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              CategoryProductsPage(categoryName: category['name']),
+                          builder: (_) => CategoryProductsPage(
+                            categoryName: category['name'],
+                          ),
                         ),
                       );
                     },
@@ -218,7 +325,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const DealsBanner(),
             const SizedBox(height: 40),
 
-            // Recommended Products Carousel
+            // Recommended Products
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -282,8 +389,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -292,9 +400,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   child: Text(
                                     product['price']!,
                                     style: const TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -303,7 +412,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
